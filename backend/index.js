@@ -8,9 +8,14 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-app.get('/', (req, res) => {
-  res.send('Hello Siddharth!')
-})
+//Available Routes
+// app.get('/', (req, res) => {
+//   res.send('Hello Siddharth!')
+// })
+
+app.use('/api/auth', require('./routes/auth'))
+app.use('/api/notes', require('./routes/notes'))
+
 
 app.listen(port, () => {
   console.log(`Url - http://localhost:${port}`)
