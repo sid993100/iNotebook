@@ -2,10 +2,10 @@ const express = require("express");
 const User = require("../models/User");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
-const bcrypt = require('bcryptjs');
-var jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+var jwt = require("jsonwebtoken");
 
-const JWT_SECRET = 'Siddharthisagoodb$oy'
+const JWT_SECRET = "Siddharthisagoodb$oy";
 //create a user using: POST "/api/auth". Doesn't require auth
 //we create validation using express-validator ==>> [here we create array and write our validation]
 router.post(
@@ -45,15 +45,15 @@ router.post(
         password: secPass,
       });
 
-      const data ={
-        user:{
-          id: user.id
-        }
-      }
-      const authtoken= jwt.sign(data, JWT_SECRET);
-      
+      const data = {
+        user: {
+          id: user.id,
+        },
+      };
+      const authtoken = jwt.sign(data, JWT_SECRET);
+
       // res.json(user);
-      res.json({authtoken: authtoken})
+      res.json({ authtoken: authtoken });
 
       //catch error
     } catch (error) {
@@ -63,4 +63,45 @@ router.post(
   }
 );
 
+//Authenticatiate a user using: POST "/api/auth/login". No login required
+router.post(
+  "/createuser",
+  [
+    body("email", "Enter a valid email").isEmail(),
+    body("password", "Password cannot be blank").exists(),
+  ],
+  async (req, res) => {
+    //If there are errors, return bad request and the errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, password } = req.body;
+    try {
+      let user = User.findOne({ email });
+      if (!user) {
+        return res
+          .status(400)
+          .json({ error: "Please try to login with correct credentials" });
+      }
+      const passwordCompare = bcrypt.compare(password, user.password);
+      if (!passwordCompare) {
+        return res
+          .status(400)
+          .json({ error: "Please try to login with correct credentials" });
+      }
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
+      const authtoken = jwt.sign(data, JWT_SECRET);
+      res.json({ authtoken });
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).send("Internal server error");
+    }
+  }
+);
 module.exports = router;
