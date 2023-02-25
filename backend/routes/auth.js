@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 
 const JWT_SECRET = "Siddharthisagoodb$oy";
-//create a user using: POST "/api/auth". Doesn't require auth
+//Router-1 : create a user using: POST "/api/auth". Doesn't require auth
 //we create validation using express-validator ==>> [here we create array and write our validation]
 router.post(
   "/createuser",
@@ -63,15 +63,16 @@ router.post(
   }
 );
 
-//Authenticatiate a user using: POST "/api/auth/login". No login required
+//Router-2 : Authenticatiate a user using: POST "/api/auth/login". No login required
 router.post(
-  "/createuser",
+  "/login",
   [
     body("email", "Enter a valid email").isEmail(),
     body("password", "Password cannot be blank").exists(),
   ],
   async (req, res) => {
-    //If there are errors, return bad request and the errors
+    let success = false;
+    // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -79,28 +80,46 @@ router.post(
 
     const { email, password } = req.body;
     try {
-      let user = User.findOne({ email });
+      let user = await User.findOne({ email });
       if (!user) {
+        success = false;
         return res
           .status(400)
           .json({ error: "Please try to login with correct credentials" });
       }
-      const passwordCompare = bcrypt.compare(password, user.password);
+
+      const passwordCompare = await bcrypt.compare(password, user.password);
       if (!passwordCompare) {
-        return res
-          .status(400)
-          .json({ error: "Please try to login with correct credentials" });
+        success = false;
+        return res.status(400).json({
+          success,
+          error: "Please try to login with correct credentials",
+        });
       }
-      const payload = {
+
+      const data = {
         user: {
           id: user.id,
         },
       };
       const authtoken = jwt.sign(data, JWT_SECRET);
-      res.json({ authtoken });
+      success = true;
+      res.json({ success, authtoken });
     } catch (error) {
-      console.log(error.message);
-      res.status(500).send("Internal server error");
+      console.error(error.message);
+      res.status(500).send("Internal Server Error");
+    }
+  }
+);
+
+//Router-3 : LoggedIn user using detail-fetching: POST "/api/auth/getuser".  login required
+router.post("/getuser", async (req, res) => {
+    try {
+      userId = "todo";
+      const user = await User.findById(userId.select("-password"));
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).send("Internal Server Error");
     }
   }
 );
