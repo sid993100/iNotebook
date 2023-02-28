@@ -5,7 +5,7 @@ const Noteitem = (props) => {
   const context = useContext(noteContext);
   // const { deleteNote } = props;
   const { deleteNote } = context;
-  const { note } = props;
+  const { note, updateNote } = props;
   return (
     <div>
       <div className="col-md-4">
@@ -19,7 +19,12 @@ const Noteitem = (props) => {
                 deleteNote(note._id);
               }}
             ></i>
-            <i className="far fa-edit mx-2"></i>
+            <i
+              className="far fa-edit mx-2"
+              onClick={() => {
+                updateNote(note);
+              }}
+            ></i>
           </div>
         </div>
       </div>
