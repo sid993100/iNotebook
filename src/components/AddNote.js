@@ -5,19 +5,18 @@ const AddNote = () => {
   const context = useContext(noteContext);
   const { addNote } = context;
 
-
-  const [note, setNotes] = useState({title: "", description:"", tag:""})
+  const [note, setNotes] = useState({ title: "", description: "", tag: "" });
   //create handleClick event
-  const handleClick = (e) =>{
+  const handleClick = (e) => {
     e.preventDefault();
-     addNote(note.title, note.description, note.tag);
-  }
+    addNote(note.title, note.description, note.tag);
+    setNotes({ title: "", description: "", tag: "" });
+  };
 
   //create onClick event
-  const onChange = (e) =>{
-    setNotes({...note, [e.target.name]: e.target.value})
-  }
-
+  const onChange = (e) => {
+    setNotes({ ...note, [e.target.name]: e.target.value });
+  };
 
   return (
     <div className="container my-3">
@@ -30,9 +29,11 @@ const AddNote = () => {
             className="form-control"
             id="title"
             name="title"
+            value={note.title}
             aria-describedby="emailHelp"
             placeholder="Title"
             onChange={onChange}
+            minLength={5}
           />
         </div>
         <div className="form-group">
@@ -42,8 +43,10 @@ const AddNote = () => {
             className="form-control"
             id="description"
             name="description"
+            value={note.description}
             placeholder="Description"
             onChange={onChange}
+            minLength={5}
           />
         </div>
         <div className="form-group">
@@ -53,11 +56,19 @@ const AddNote = () => {
             className="form-control"
             id="tag"
             name="tag"
+            value={note.tag}
             placeholder="Tag"
             onChange={onChange}
+            minLength={5}
+            required
           />
         </div>
-        <button type="submit" className="btn btn-primary" onClick={handleClick}>
+        <button
+          disabled={note.title.length < 5 || note.description.length < 5}
+          type="submit"
+          className="btn btn-primary"
+          onClick={handleClick}
+        >
           Add Note
         </button>
       </form>

@@ -1,6 +1,7 @@
 import React from "react";
 import NoteContext from "./noteContext";
 import { useState } from "react";
+import { json } from "react-router-dom";
 
 const NoteState = (props) => {
   const host = "http://localhost:5000";
@@ -21,7 +22,6 @@ const NoteState = (props) => {
       },
     });
     const json = await response.json();
-    console.log(json);
     setNotes(json);
   };
 
@@ -53,9 +53,7 @@ const NoteState = (props) => {
       },
     });
     const json = response.json(); // parses JSON response into native JavaScript objects
-    console.log(json);
-
-    console.log("Delete note" + id);
+  
     const newNote = notes.filter((note) => {
       return note._id !== id;
     });

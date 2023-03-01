@@ -29,7 +29,7 @@ const Notes = () => {
   };
 
   const handleClick = (e) => {
-    console.log(note)
+    console.log(note);
     editNote(note.id, note.etitle, note.edescription, note.etag);
     refClose.current.click();
   };
@@ -116,6 +116,7 @@ const Notes = () => {
                     name="etag"
                     value={note.etag}
                     onChange={onChange}
+                    required
                   />
                 </div>
               </form>
@@ -144,9 +145,9 @@ const Notes = () => {
         </div>
       </div>
 
-      <div className="row my-3">
+      <div className="container row my-3">
         <h1>Your Notes</h1>
-
+        {notes.length === 0 && "No notes to display"}
         {notes.map((note) => {
           return (
             <Noteitem key={note._id} updateNote={updateNote} note={note} />
