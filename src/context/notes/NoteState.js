@@ -1,7 +1,6 @@
 import React from "react";
 import NoteContext from "./noteContext";
 import { useState } from "react";
-import { json } from "react-router-dom";
 
 const NoteState = (props) => {
   const host = "http://localhost:5000";
